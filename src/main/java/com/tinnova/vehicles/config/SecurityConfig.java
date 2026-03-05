@@ -30,27 +30,25 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/swagger-config",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/veiculos/**")
+                        .hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/veiculos/**")
+                        .hasRole("ADMIN")
+                        .anyRequest()
+                        .authenticated()
                 )
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/auth/**").permitAll()
-//                        .requestMatchers(
-//                                "/v3/api-docs/**",
-//                                "/swagger-ui/**",
-//                                "/swagger-ui.html",
-//                                "/swagger-ui/index.html",
-//                                "/swagger-resources/**",
-//                                "/webjars/**"
-//                        ).permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/veiculos/**")
-//                        .hasAnyRole("ADMIN", "USER")
-//                        .requestMatchers("/veiculos/**")
-//                        .hasRole("ADMIN")
-//                        .anyRequest()
-//                        .authenticated()
-//                )
-                //.addFilterBefore(jwtFilter,
-                  //      UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -68,14 +66,5 @@ public class SecurityConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers(
-                "/v3/api-docs/**",
-                "/swagger-ui/**",
-                "/swagger-ui.html"
-        );
     }
 }
