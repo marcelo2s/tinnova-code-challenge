@@ -83,6 +83,6 @@ spring:
 
 ## Documentação da API
 
-A documentação Swagger está disponível em: `http://localhost:8080/swagger`
+A documentação Swagger está disponível em: `http://localhost:8080/swagger-ui/index.html`
 
 
